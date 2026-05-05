@@ -1,5 +1,20 @@
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import UserLayout from "./components/Layout/UserLayout";
+import AdminLayout from "./components/Layout/AdminLayout";
+
 const App = () => {
-  return <div>App</div>;
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<UserLayout />}>
+          {/* User Route */}
+        </Route>
+        <Route path="/admin" element={<AdminLayout />}>
+          {/* Admin Route */}
+        </Route>
+      </Routes>
+    </BrowserRouter>
+  );
 };
 
 export default App;
