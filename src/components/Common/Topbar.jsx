@@ -25,6 +25,7 @@ const Topbar = () => {
             We ship worldwide - Fast and reliable shipping!
           </span>
         </div>
+
         {/* Contact */}
         <div className="hidden text-sm md:block">
           <a href="tel:123456789" className="hover:text-gray-300">

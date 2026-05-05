@@ -1,3 +1,4 @@
+import Navbar from "./Navbar";
 import Topbar from "./Topbar";
 
 const Header = () => {
@@ -6,6 +7,7 @@ const Header = () => {
       {/* Topbar */}
       <Topbar />
       {/* Navbar */}
+      <Navbar />
     </header>
   );
 };
