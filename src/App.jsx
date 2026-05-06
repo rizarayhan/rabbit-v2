@@ -1,6 +1,8 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import UserLayout from "./components/Layout/UserLayout";
 import AdminLayout from "./components/Layout/AdminLayout";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
 
 const App = () => {
   return (
@@ -8,6 +10,8 @@ const App = () => {
       <Routes>
         <Route path="/" element={<UserLayout />}>
           {/* User Route */}
+          <Route path="login" element={<Login />} />
+          <Route path="register" element={<Register />} />
         </Route>
         <Route path="/admin" element={<AdminLayout />}>
           {/* Admin Route */}
