@@ -1,4 +1,5 @@
 import Hero from "../components/Layout/Hero";
+import GenderCollectionSection from "../components/Products/GenderCollectionSection";
 
 const Home = () => {
   return (
@@ -6,6 +7,7 @@ const Home = () => {
       {/* Hero */}
       <Hero />
       {/* Gender Collection */}
+      <GenderCollectionSection />
       {/* New Arrivals */}
       {/* Best Seller */}
       {/* Also like */}
