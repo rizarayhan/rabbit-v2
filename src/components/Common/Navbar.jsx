@@ -6,6 +6,7 @@ import {
 } from "react-icons/hi2";
 import { IoMdClose } from "react-icons/io";
 import { Link } from "react-router-dom";
+import Searchbar from "./Searchbar";
 
 const Navbar = () => {
   const [isNavOpen, setIsNavOpen] = useState(false);
@@ -58,7 +59,9 @@ const Navbar = () => {
           </button>
 
           {/* Searchbar */}
-          <div className="overflow-hidden"></div>
+          <div className="overflow-hidden">
+            <Searchbar />
+          </div>
 
           {/* Mobile toggle nav */}
           <button onClick={toggleNav} className="md:hidden cursor-pointer">

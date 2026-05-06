@@ -1,4 +1,11 @@
+import { useNavigate } from "react-router-dom";
+
 const Profile = () => {
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    navigate("/login");
+  };
   return (
     <div className="min-h-screen flex flex-col">
       <div className="grow container mx-auto p-4 md:p-6">
@@ -7,7 +14,10 @@ const Profile = () => {
           <div className="w-full md:w-1/3 lg:w-1/4 rounded-lg shadow-md p-6">
             <h1 className="text-2xl md:text-3xl font-bold mb-4">Name</h1>
             <p className="text-lg text-gray-600 mb-4">email@example.com</p>
-            <button className="w-full bg-red-500 hover:bg-red-600 text-white font-semibold rounded p-2">
+            <button
+              onClick={handleLogout}
+              className="w-full bg-red-500 hover:bg-red-600 text-white font-semibold rounded p-2"
+            >
               Logout
             </button>
           </div>
