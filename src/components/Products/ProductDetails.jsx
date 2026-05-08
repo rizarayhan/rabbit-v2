@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import ProductGrid from "./ProductGrid";
 
 const selectedProduct = {
   name: "Stylish Jacket",
@@ -222,6 +223,7 @@ const ProductDetails = () => {
             You May Also Like
           </h2>
           {/* Product grid */}
+          <ProductGrid products={similarProducts} />
         </div>
       </div>
     </div>
