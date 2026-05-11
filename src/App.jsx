@@ -6,6 +6,7 @@ import Register from "./pages/Register";
 import Profile from "./pages/Profile";
 import Home from "./pages/Home";
 import CollectionPage from "./pages/CollectionPage";
+import Checkout from "./components/Cart/Checkout";
 
 const App = () => {
   return (
@@ -18,6 +19,7 @@ const App = () => {
           <Route path="register" element={<Register />} />
           <Route path="profile" element={<Profile />} />
           <Route path="collection" element={<CollectionPage />} />
+          <Route path="checkout" element={<Checkout />} />
         </Route>
         <Route path="/admin" element={<AdminLayout />}>
           {/* Admin Route */}
