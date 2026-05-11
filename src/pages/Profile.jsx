@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import MyOrderPage from "./MyOrderPage";
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -22,7 +23,10 @@ const Profile = () => {
             </button>
           </div>
           {/* My Orders */}
-          <div className="w-full md:w-2/3 lg:w-3/4">{/* Order Page */}</div>
+          <div className="w-full md:w-2/3 lg:w-3/4">
+            {/* Order Page */}
+            <MyOrderPage />
+          </div>
         </div>
       </div>
     </div>

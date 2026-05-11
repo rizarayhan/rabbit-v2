@@ -8,6 +8,8 @@ import Home from "./pages/Home";
 import CollectionPage from "./pages/CollectionPage";
 import Checkout from "./components/Cart/Checkout";
 import OrderConfirmationPage from "./pages/OrderConfirmationPage";
+import OrderDetailsPage from "./pages/OrderDetailsPage";
+import MyOrderPage from "./pages/MyOrderPage";
 
 const App = () => {
   return (
@@ -25,6 +27,8 @@ const App = () => {
             path="order-confirmation"
             element={<OrderConfirmationPage />}
           />
+          <Route path="order/:id" element={<OrderDetailsPage />} />
+          <Route path="my-orders" element={<MyOrderPage />} />
         </Route>
         <Route path="/admin" element={<AdminLayout />}>
           {/* Admin Route */}
