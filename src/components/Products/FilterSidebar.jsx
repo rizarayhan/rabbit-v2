@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 
 const FilterSidebar = () => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const navigate = useNavigate();
   const [filters, setFilters] = useState({
     category: "",
     gender: "",
@@ -88,14 +87,25 @@ const FilterSidebar = () => {
   const updateURLParams = (newFilters) => {
     const params = new URLSearchParams();
     Object.keys(newFilters).forEach((key) => {
-      if (Array.isArray(newFilters[key] && newFilters[key].length > 0)) {
-        params.append(key, newFilters[key].join(","));
-      } else if (newFilters[key]) {
-        params.append(key, newFilters[key]);
+      const value = newFilters[key];
+
+      if (value === "") return;
+
+      if (Array.isArray(value)) {
+        if (value.length > 0) {
+          params.set(key, value.join(","));
+        }
+      } else if (value !== "" || value !== null || value !== undefined) {
+        if (
+          (key === "minPrice" && value === 0) ||
+          (key === "maxPrice" && value === 100)
+        ) {
+          return;
+        }
+        params.set(key, value);
       }
     });
     setSearchParams(params);
-    navigate(`?${params.toString()}`);
   };
 
   const handlePriceChange = (e) => {
@@ -103,6 +113,7 @@ const FilterSidebar = () => {
     setPriceRange([0, newPrice]);
     const newFilters = { ...filters, minPrice: 0, maxPrice: newPrice };
     setFilters(newFilters);
+    updateURLParams(newFilters);
   };
 
   return (

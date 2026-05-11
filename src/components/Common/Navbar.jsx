@@ -7,13 +7,20 @@ import {
 import { IoMdClose } from "react-icons/io";
 import { Link } from "react-router-dom";
 import Searchbar from "./Searchbar";
+import CartDrawer from "../Layout/CartDrawer";
 
 const Navbar = () => {
   const [isNavOpen, setIsNavOpen] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
   const toggleNav = () => {
     setIsNavOpen(!isNavOpen);
   };
+
+  const toggleCartDrawer = () => {
+    setDrawerOpen(!drawerOpen);
+  };
+
   return (
     <>
       <nav className="container mx-auto flex text-center justify-between px-6 py-4">
@@ -51,7 +58,10 @@ const Navbar = () => {
           <Link to="/profile">
             <HiOutlineUser className="h-6 w-6 hover:text-black text-gray-700" />
           </Link>
-          <button className="relative cursor-pointer">
+          <button
+            onClick={toggleCartDrawer}
+            className="relative cursor-pointer"
+          >
             <HiOutlineShoppingBag className="h-6 w-6 hover:text-black text-gray-700" />
             <span className="absolute -top-1 bg-rabbit text-white text-xs rounded-full px-2 py-0.5">
               4
@@ -69,6 +79,9 @@ const Navbar = () => {
           </button>
         </div>
       </nav>
+
+      {/* Cart Drawer */}
+      <CartDrawer drawerOpen={drawerOpen} toggleCartDrawer={toggleCartDrawer} />
 
       {/* Mobile Navigation */}
       <div
