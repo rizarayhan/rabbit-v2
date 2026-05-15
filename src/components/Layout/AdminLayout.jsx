@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { FaBars } from "react-icons/fa";
 import { Outlet } from "react-router-dom";
+import AdminSidebar from "../Admin/AdminSidebar";
 
 const AdminLayout = () => {
   const [isSidebar, setIsSidebar] = useState(false);
@@ -33,6 +34,7 @@ const AdminLayout = () => {
         transition-transform duration-300 md:translate-x-0 md:block z-20`}
       >
         {/* Admin Sidebar */}
+        <AdminSidebar />
       </div>
 
       {/* Main Content */}
