@@ -1,15 +1,25 @@
 import { useState } from "react";
 import registerImage from "../assets/register.webp";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
+import { useRegister } from "../hooks/useRegister";
 
 const Register = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const location = useLocation();
+
+  const redirect = new URLSearchParams(location.search).get("redirect") || "/";
+
+  const { mutate, isPending, isError, error } = useRegister();
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Register: ", name, email, password);
+    mutate({
+      name,
+      email,
+      password,
+    });
   };
   return (
     <div className="flex">
@@ -60,15 +70,23 @@ const Register = () => {
               required
             />
           </div>
-          <button className="w-full bg-black hover:bg-gray-800 text-white font-semibold p-2 rounded-lg mb-4 cursor-pointer">
-            Sign Up
+          <button
+            disabled={isPending}
+            type="submit"
+            className="w-full bg-black hover:bg-gray-800 text-white font-semibold p-2 rounded-lg mb-4 cursor-pointer"
+          >
+            {isPending ? "Loading..." : "Sign Up"}
           </button>
           <p className="text-center text-sm">
             Have an account?{" "}
-            <Link to="/login" className="text-blue-500">
+            <Link
+              to={`/login?redirect=${encodeURIComponent(redirect)}`}
+              className="text-blue-500"
+            >
               Login
             </Link>
           </p>
+          {isError && <p>{error.message}</p>}
         </form>
       </div>
 

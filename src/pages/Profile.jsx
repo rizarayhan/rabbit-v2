@@ -1,10 +1,19 @@
 import { useNavigate } from "react-router-dom";
 import MyOrderPage from "./MyOrderPage";
+import { useAuthStore } from "../store/authStore";
+import { useEffect } from "react";
 
 const Profile = () => {
   const navigate = useNavigate();
+  const user = useAuthStore((state) => state.user);
+  const logout = useAuthStore((state) => state.logout);
+
+  useEffect(() => {
+    if (!user) navigate("/login");
+  }, [user, navigate]);
 
   const handleLogout = () => {
+    logout();
     navigate("/login");
   };
   return (

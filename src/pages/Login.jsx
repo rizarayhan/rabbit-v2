@@ -1,14 +1,23 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import loginImage from "../assets/login.webp";
+import { useLogin } from "../hooks/useLogin";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const location = useLocation();
+
+  const redirect = new URLSearchParams(location.search).get("redirect") || "/";
+
+  const { mutate, isPending, isError, error } = useLogin();
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Login: ", email, password);
+    mutate({
+      email,
+      password,
+    });
   };
   return (
     <div className="flex">
@@ -49,17 +58,22 @@ const Login = () => {
             />
           </div>
           <button
+            disabled={isPending}
             type="submit"
             className="w-full p-2 rounded-lg bg-black hover:bg-gray-800 text-white font-semibold mb-6 cursor-pointer"
           >
-            Sign In
+            {isPending ? "Loading..." : "Sign In"}
           </button>
           <p className="text-center text-sm">
             Don't have an account?{" "}
-            <Link to="/register" className="text-blue-500">
+            <Link
+              to={`/register?redirect=${encodeURIComponent(redirect)}`}
+              className="text-blue-500"
+            >
               Register
             </Link>
           </p>
+          {isError && <p>{error.message}</p>}
         </form>
       </div>
 
