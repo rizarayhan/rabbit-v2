@@ -1,25 +1,40 @@
 import { useState } from "react";
 import registerImage from "../assets/register.webp";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useRegister } from "../hooks/useRegister";
+import { useAuthStore } from "../store/authStore";
+import { useCartStore } from "../store/cartStore";
 
 const Register = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const navigate = useNavigate();
   const location = useLocation();
+  const guestId = useAuthStore((state) => state.guestId);
+
+  const cart = useCartStore((state) => state.cart);
+  const mergeCart = useCartStore((state) => state.mergeCart);
+
+  const { mutateAsync: register, isPending, isError, error } = useRegister();
 
   const redirect = new URLSearchParams(location.search).get("redirect") || "/";
+  const isCheckoutRedirect = redirect.includes("checkout");
 
-  const { mutate, isPending, isError, error } = useRegister();
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    mutate({
-      name,
-      email,
-      password,
-    });
+
+    try {
+      const registerData = await register({ name, email, password });
+
+      if (cart?.products?.length > 0 && guestId) {
+        await mergeCart({ guestId, user: registerData.user._id });
+      }
+
+      navigate(isCheckoutRedirect ? "/checkout" : "/");
+    } catch (error) {
+      console.error(error);
+    }
   };
   return (
     <div className="flex">

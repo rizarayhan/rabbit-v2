@@ -9,6 +9,6 @@ export const useCart = ({ userId, guestId }) => {
         userId,
         guestId,
       }),
-    enabled: !!guestId || !!userId,
+    enabled: (!!guestId && !userId) || !!userId,
   });
 };

@@ -1,23 +1,40 @@
 import { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import loginImage from "../assets/login.webp";
 import { useLogin } from "../hooks/useLogin";
+import { useAuthStore } from "../store/authStore";
+import { useCartStore } from "../store/cartStore";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const navigate = useNavigate();
   const location = useLocation();
 
+  const guestId = useAuthStore((state) => state.guestId);
+
+  const cart = useCartStore((state) => state.cart);
+  const mergeCart = useCartStore((state) => state.mergeCart);
+
+  const { mutateAsync: login, isPending, isError, error } = useLogin();
+
   const redirect = new URLSearchParams(location.search).get("redirect") || "/";
+  const isCheckoutRedirect = redirect.includes("checkout");
 
-  const { mutate, isPending, isError, error } = useLogin();
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    mutate({
-      email,
-      password,
-    });
+
+    try {
+      const loginData = await login({ email, password });
+
+      if (cart?.products?.length > 0 && guestId) {
+        await mergeCart({ guestId, user: loginData.user._id });
+      }
+
+      navigate(isCheckoutRedirect ? "/checkout" : "/");
+    } catch (error) {
+      console.error(error);
+    }
   };
   return (
     <div className="flex">
