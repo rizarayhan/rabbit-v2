@@ -1,55 +1,28 @@
 import { useEffect, useState } from "react";
 import ProductGrid from "./ProductGrid";
+import { useParams } from "react-router-dom";
+import { useProductDetails } from "../../hooks/useProductDetails";
+import { useSimilarProducts } from "../../hooks/useSimilarProducts";
+import { useAuthStore } from "../../store/authStore";
+import { useCartStore } from "../../store/cartStore";
+import { toast } from "sonner";
 
-const selectedProduct = {
-  name: "Stylish Jacket",
-  price: 20,
-  originalPrice: 150,
-  description: "This is a stylish Jacket perfect for any occasion",
-  brand: "FashionBrand",
-  material: "Leather",
-  sizes: ["S", "M", "L", "XL"],
-  colors: ["Red", "Black"],
-  images: [
-    {
-      url: "https://picsum.photos/500/500?random=1",
-      altText: "Stylish Jacket 1",
-    },
-    {
-      url: "https://picsum.photos/500/500?random=2",
-      altText: "Stylish Jacket 2",
-    },
-  ],
-};
+const ProductDetails = ({ productId }) => {
+  const { id } = useParams();
+  const productFetchId = productId || id;
+  const {
+    data: selectedProduct,
+    isLoading,
+    error,
+  } = useProductDetails(productFetchId);
 
-const similarProducts = [
-  {
-    _id: 1,
-    name: "Product 1",
-    price: 100,
-    images: [{ url: "https://picsum.photos/500/500?random=1" }],
-  },
-  {
-    _id: 2,
-    name: "Product 2",
-    price: 100,
-    images: [{ url: "https://picsum.photos/500/500?random=2" }],
-  },
-  {
-    _id: 3,
-    name: "Product 3",
-    price: 100,
-    images: [{ url: "https://picsum.photos/500/500?random=3" }],
-  },
-  {
-    _id: 4,
-    name: "Product 4",
-    price: 100,
-    images: [{ url: "https://picsum.photos/500/500?random=4" }],
-  },
-];
+  const { data: similarProducts = [] } = useSimilarProducts(productFetchId);
 
-const ProductDetails = () => {
+  const user = useAuthStore((state) => state.user);
+  const guestId = useAuthStore((state) => state.guestId);
+
+  const addToCart = useCartStore((state) => state.addToCart);
+
   const [mainImage, setMainImage] = useState(null);
   const [selectedSize, setSelectedSize] = useState("");
   const [selectedColor, setSelectedColor] = useState("");
@@ -65,17 +38,30 @@ const ProductDetails = () => {
     }
   };
 
-  const handleAddTocart = () => {
+  const handleAddTocart = async () => {
     if (!selectedSize || !selectedColor) {
-      //
+      toast.error("Please select a size and color before adding cart.");
       return;
     }
 
-    setIsButtonDisable(true);
+    try {
+      setIsButtonDisable(true);
 
-    setTimeout(() => {
+      await addToCart({
+        productId: productFetchId,
+        quantity,
+        size: selectedSize,
+        color: selectedColor,
+        guestId,
+        userId: user?._id,
+      });
+
+      toast.success("Product added to cart!");
+    } catch (error) {
+      toast.error(error.message);
+    } finally {
       setIsButtonDisable(false);
-    }, 500);
+    }
   };
 
   useEffect(() => {
@@ -84,13 +70,21 @@ const ProductDetails = () => {
     }
   }, [selectedProduct]);
 
+  if (isLoading) {
+    <p>Loading...</p>;
+  }
+
+  if (error) {
+    <p>Error: {error.message}</p>;
+  }
+
   return (
     <div className="p-6">
       <div className="max-w-6xl mx-auto bg-white p-8 rounded-lg">
         <div className="flex flex-col md:flex-row">
           {/* Left thumbnails */}
           <div className="hidden md:flex flex-col space-y-4 mr-6">
-            {selectedProduct.images.map((image, index) => (
+            {selectedProduct?.images.map((image, index) => (
               <img
                 key={index}
                 src={image.url}
@@ -115,7 +109,7 @@ const ProductDetails = () => {
 
           {/* Mobile Thumbnail */}
           <div className="md:hidden flex overscroll-x-auto space-x-4 mb-4">
-            {selectedProduct.images.map((image, index) => (
+            {selectedProduct?.images.map((image, index) => (
               <img
                 key={index}
                 src={image.url || null}
@@ -130,20 +124,20 @@ const ProductDetails = () => {
           {/* Right Side */}
           <div className="md:w-1/2 md:ml-10">
             <h1 className="text-2xl md:text-3xl font-semibold mb-2">
-              {selectedProduct.name}
+              {selectedProduct?.name}
             </h1>
             <p className="text-lg text-gray-600 mb-1 line-through">
-              ${selectedProduct.originalPrice}
+              ${selectedProduct?.originalPrice}
             </p>
             <p className="text-xl text-gray-500 mb-2">
-              ${selectedProduct.price}
+              ${selectedProduct?.price}
             </p>
-            <p className="text-gray-600 mb-4">{selectedProduct.description}</p>
+            <p className="text-gray-600 mb-4">{selectedProduct?.description}</p>
 
             <div className="mb-4">
               <p className="text-gray-700">Color:</p>
               <div className="flex gap-2 mt-2">
-                {selectedProduct.colors.map((color) => (
+                {selectedProduct?.colors.map((color) => (
                   <button
                     key={color}
                     onClick={() => setSelectedColor(color)}
@@ -160,7 +154,7 @@ const ProductDetails = () => {
             <div className="mb-4">
               <p className="text-gray-700">Size:</p>
               <div className="flex gap-2 mt-2">
-                {selectedProduct.sizes.map((size) => (
+                {selectedProduct?.sizes.map((size) => (
                   <button
                     key={size}
                     onClick={() => setSelectedSize(size)}
@@ -206,11 +200,11 @@ const ProductDetails = () => {
                 <tbody>
                   <tr>
                     <td className="py-1">Brand</td>
-                    <td className="py-1">{selectedProduct.brand}</td>
+                    <td className="py-1">{selectedProduct?.brand}</td>
                   </tr>
                   <tr>
                     <td className="py-1">Material</td>
-                    <td className="py-1">{selectedProduct.material}</td>
+                    <td className="py-1">{selectedProduct?.material}</td>
                   </tr>
                 </tbody>
               </table>

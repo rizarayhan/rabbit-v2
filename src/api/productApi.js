@@ -14,6 +14,12 @@ export const getProducts = async (filters) => {
   return response.data;
 };
 
+export const updateProduct = async ({ id, productData }) => {
+  const response = await api.put(`/api/products/${id}`, productData);
+
+  return response.data;
+};
+
 export const getProductDetails = async (id) => {
   const response = await api.get(`/api/products/${id}`);
 
@@ -26,8 +32,14 @@ export const getSimilarProducts = async (id) => {
   return response.data;
 };
 
-export const updateProduct = async ({ id, productData }) => {
-  const response = await api.put(`/api/products/${id}`, productData);
+export const getNewArrivals = async () => {
+  const response = await api.get("/api/products/new-arrivals");
+
+  return response.data;
+};
+
+export const getBestSeller = async () => {
+  const response = await api.get("/api/products/best-seller");
 
   return response.data;
 };
