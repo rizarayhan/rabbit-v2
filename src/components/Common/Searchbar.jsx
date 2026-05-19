@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { HiMagnifyingGlass, HiMiniXMark } from "react-icons/hi2";
+import { useNavigate } from "react-router-dom";
 
 const Searchbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const navigate = useNavigate();
 
   const handleToggleSearch = () => {
     setIsOpen(!isOpen);
@@ -11,7 +13,8 @@ const Searchbar = () => {
 
   const handleSearch = (e) => {
     e.preventDefault();
-    console.log(searchTerm);
+    navigate(`/collection/all?search=${searchTerm}`);
+    setIsOpen(false);
   };
   return (
     <div

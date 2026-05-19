@@ -1,29 +1,51 @@
 import { RiDeleteBin2Line } from "react-icons/ri";
+import { useCartStore } from "../../store/cartStore";
+import { useAuthStore } from "../../store/authStore";
 
 const CartContent = () => {
-  const cartProducts = [
-    {
-      productId: 1,
-      name: "T-shirt",
-      size: "M",
-      color: "Red",
-      quantity: 1,
-      price: 15,
-      image: "https://picsum.photos/200/300?random=1",
-    },
-    {
-      productId: 2,
-      name: "Jeans",
-      size: "L",
-      color: "Blue",
-      quantity: 1,
-      price: 25,
-      image: "https://picsum.photos/200/300?random=2",
-    },
-  ];
+  const cart = useCartStore((state) => state.cart);
+  const user = useAuthStore((state) => state.user);
+  const guestId = useAuthStore((state) => state.guestId);
+
+  console.log("cart: ", cart);
+
+  const updateCartItem = useCartStore((state) => state.updateCartItem);
+  const removeFromCart = useCartStore((state) => state.removeFromCart);
+
+  const handleUpdateCartItem = async (
+    productId,
+    delta,
+    quantity,
+    size,
+    color,
+  ) => {
+    const newQuantity = quantity + delta;
+
+    if (newQuantity >= 1) {
+      await updateCartItem({
+        productId,
+        quantity: newQuantity,
+        guestId,
+        userId: user?._id,
+        size,
+        color,
+      });
+    }
+  };
+
+  const handleRemoveFromCart = async (productId, size, color) => {
+    await removeFromCart({
+      productId,
+      guestId,
+      userId: user?._id,
+      size,
+      color,
+    });
+  };
+
   return (
     <div>
-      {cartProducts.map((product) => (
+      {cart?.products?.map((product) => (
         <div
           key={product.productId}
           className="flex items-start justify-between py-4 border-b"
@@ -40,19 +62,49 @@ const CartContent = () => {
                 size: {product.size} | color: {product.color}
               </p>
               <div className="flex items-center mt-2">
-                <button className="border rounded px-2 py-1 text-xl font-medium">
+                <button
+                  onClick={() =>
+                    handleUpdateCartItem(
+                      product.productId,
+                      -1,
+                      product.quantity,
+                      product.size,
+                      product.color,
+                    )
+                  }
+                  className="border rounded px-2 py-1 text-xl font-medium"
+                >
                   -
                 </button>
                 <span className="mx-4">{product.quantity}</span>
-                <button className="border rounded px-2 py-1 text-xl font-medium">
+                <button
+                  onClick={() =>
+                    handleUpdateCartItem(
+                      product.productId,
+                      1,
+                      product.quantity,
+                      product.size,
+                      product.color,
+                    )
+                  }
+                  className="border rounded px-2 py-1 text-xl font-medium"
+                >
                   +
                 </button>
               </div>
             </div>
           </div>
           <div>
-            <p>${product.price.toFixed(2)}</p>
-            <button>
+            <p>${product.price}</p>
+            <button
+              onClick={() =>
+                handleRemoveFromCart(
+                  product.productId,
+                  product.size,
+                  product.color,
+                )
+              }
+            >
               <RiDeleteBin2Line className="h-6 w-6 mt-2 text-red-600" />
             </button>
           </div>

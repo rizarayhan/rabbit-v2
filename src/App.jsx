@@ -17,6 +17,7 @@ import EditProductPage from "./components/Admin/EditProductPage";
 import OrderManagement from "./components/Admin/OrderManagement";
 import ProtectedRoute from "./components/Common/ProtectedRoute";
 import { Toaster } from "sonner";
+import ProductDetails from "./components/Products/ProductDetails";
 
 const App = () => {
   return (
@@ -29,7 +30,8 @@ const App = () => {
           <Route path="login" element={<Login />} />
           <Route path="register" element={<Register />} />
           <Route path="profile" element={<Profile />} />
-          <Route path="collection" element={<CollectionPage />} />
+          <Route path="collection/:collection" element={<CollectionPage />} />
+          <Route path="product/:id" element={<ProductDetails />} />
           <Route path="checkout" element={<Checkout />} />
           <Route
             path="order-confirmation"

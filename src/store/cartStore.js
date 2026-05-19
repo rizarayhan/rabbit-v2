@@ -10,7 +10,7 @@ import { persist } from "zustand/middleware";
 
 export const useCartStore = create(
   persist(
-    (set) => ({
+    (set, get) => ({
       cart: {
         products: [],
       },
@@ -140,6 +140,12 @@ export const useCartStore = create(
             products: [],
           },
         });
+      },
+
+      getCartCount: () => {
+        const cart = get().cart;
+
+        return cart.products.reduce((total, item) => total + item.quantity, 0);
       },
     }),
     {

@@ -8,10 +8,13 @@ import { IoMdClose } from "react-icons/io";
 import { Link } from "react-router-dom";
 import Searchbar from "./Searchbar";
 import CartDrawer from "../Layout/CartDrawer";
+import { useCartStore } from "../../store/cartStore";
 
 const Navbar = () => {
   const [isNavOpen, setIsNavOpen] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
+
+  const cartCount = useCartStore((state) => state.getCartCount());
 
   const toggleNav = () => {
     setIsNavOpen(!isNavOpen);
@@ -33,16 +36,28 @@ const Navbar = () => {
 
         {/* Center - Navigation */}
         <div className="hidden md:flex text-gray-700 text-sm font-medium space-x-6 items-center">
-          <Link to="#" className="hover:text-black uppercase">
+          <Link
+            to="/collection/all?gender=Men"
+            className="hover:text-black uppercase"
+          >
             Men
           </Link>
-          <Link to="#" className="hover:text-black uppercase">
+          <Link
+            to="/collection/all?gender=Women"
+            className="hover:text-black uppercase"
+          >
             Women
           </Link>
-          <Link to="#" className="hover:text-black uppercase">
+          <Link
+            to="/collection/all?category=Top Wear"
+            className="hover:text-black uppercase"
+          >
             Top Wear
           </Link>
-          <Link to="#" className="hover:text-black uppercase">
+          <Link
+            to="/collection/all?category=Bottom Wear"
+            className="hover:text-black uppercase"
+          >
             Bottom Wear
           </Link>
         </div>
@@ -63,9 +78,11 @@ const Navbar = () => {
             className="relative cursor-pointer"
           >
             <HiOutlineShoppingBag className="h-6 w-6 hover:text-black text-gray-700" />
-            <span className="absolute -top-1 bg-rabbit text-white text-xs rounded-full px-2 py-0.5">
-              4
-            </span>
+            {cartCount > 0 && (
+              <span className="absolute -top-1 bg-rabbit text-white text-xs rounded-full px-2 py-0.5">
+                {cartCount}
+              </span>
+            )}
           </button>
 
           {/* Searchbar */}
@@ -98,28 +115,28 @@ const Navbar = () => {
           <h2 className="text-xl font-semibold mb-4">Menu</h2>
           <nav className="space-y-4">
             <Link
-              to="#"
+              to="collection/all?gender=Men"
               onClick={toggleNav}
               className="block text-gray-600 hover:text-black"
             >
               Men
             </Link>
             <Link
-              to="#"
+              to="/collection/all?gender=Women"
               onClick={toggleNav}
               className="block text-gray-600 hover:text-black"
             >
               Women
             </Link>
             <Link
-              to="#"
+              to="/collection/all?category=Top Wear"
               onClick={toggleNav}
               className="block text-gray-600 hover:text-black"
             >
               Top Wear
             </Link>
             <Link
-              to="#"
+              to="/collection/all?category=Bottom Wear"
               onClick={toggleNav}
               className="block text-gray-600 hover:text-black"
             >
