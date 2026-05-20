@@ -18,7 +18,6 @@ const Checkout = () => {
   const { mutateAsync: payCheckoutMutation } = usePayCheckout();
   const { mutateAsync: finalizeChekcoutMutation } = useFinalizeCheckout();
 
-  const [checkoutId, setCheckoutId] = useState(null);
   const [shippingAddress, setShippingAddress] = useState({
     firstName: "",
     lastName: "",
@@ -45,8 +44,6 @@ const Checkout = () => {
         totalPrice: cart.totalPrice,
       });
 
-      setCheckoutId(data._id);
-
       await handlePaymentSuccess(data._id);
     } catch (error) {
       console.error(error);
@@ -59,7 +56,7 @@ const Checkout = () => {
 
       await finalizeChekcoutMutation(checkoutId);
 
-      navigate("/order-confirmation");
+      navigate(`/order-confirmation/${checkoutId}`);
     } catch (error) {
       console.error(error);
     }
