@@ -1,28 +1,23 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-
-const cart = {
-  products: [
-    {
-      name: "T-shirt",
-      size: "M",
-      color: "Red",
-      price: 15,
-      image: "https://picsum.photos/200/300?random=1",
-    },
-    {
-      name: "Jeans",
-      size: "L",
-      color: "Blue",
-      price: 25,
-      image: "https://picsum.photos/200/300?random=2",
-    },
-  ],
-  totalPrice: 195,
-};
+import { useCartStore } from "../../store/cartStore";
+import { useAuthStore } from "../../store/authStore";
+import {
+  useCreateCheckout,
+  useFinalizeCheckout,
+  usePayCheckout,
+} from "../../hooks/useCheckout";
 
 const Checkout = () => {
   const navigate = useNavigate();
+  const cart = useCartStore((state) => state.cart);
+  const user = useAuthStore((state) => state.user);
+  const { mutateAsync: createCheckoutMutation, isPending: isPendingCheckout } =
+    useCreateCheckout();
+
+  const { mutateAsync: payCheckoutMutation } = usePayCheckout();
+  const { mutateAsync: finalizeChekcoutMutation } = useFinalizeCheckout();
+
   const [checkoutId, setCheckoutId] = useState(null);
   const [shippingAddress, setShippingAddress] = useState({
     firstName: "",
@@ -34,16 +29,42 @@ const Checkout = () => {
     phone: "",
   });
 
-  const handleCreateCheckout = (e) => {
+  useEffect(() => {
+    if (!cart?.products?.length) {
+      navigate("/");
+    }
+  }, [cart, navigate]);
+
+  const handleCreateCheckout = async (e) => {
     e.preventDefault();
-    setCheckoutId(123);
-    handlePaymentSuccess();
+    try {
+      const data = await createCheckoutMutation({
+        checkoutItems: cart.products,
+        shippingAddress,
+        paymentMethod: "Paypal",
+        totalPrice: cart.totalPrice,
+      });
+
+      setCheckoutId(data._id);
+
+      await handlePaymentSuccess(data._id);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
-  const handlePaymentSuccess = (details) => {
-    console.log("Payment Successfull: ", details);
-    navigate("/order-confirmation");
+  const handlePaymentSuccess = async (checkoutId) => {
+    try {
+      await payCheckoutMutation({ checkoutId, paymentDetails: {} });
+
+      await finalizeChekcoutMutation(checkoutId);
+
+      navigate("/order-confirmation");
+    } catch (error) {
+      console.error(error);
+    }
   };
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-7xl mx-auto px-6 py-10 tracking-tighter">
       {/* left section */}
@@ -55,7 +76,7 @@ const Checkout = () => {
             <label className="block text-gray-50">Email</label>
             <input
               type="email"
-              value="user@example.com"
+              value={user ? user.email : ""}
               className="w-full p-2 border border-gray-200 rounded"
               disabled
             />
@@ -170,8 +191,12 @@ const Checkout = () => {
               />
             </div>
             <div className="mt-6">
-              <button className="w-full bg-black text-white py-3 rounded hover:bg-gray-800">
-                Continue to Payment
+              <button
+                disabled={isPendingCheckout}
+                type="submit"
+                className="w-full bg-black text-white py-3 rounded hover:bg-gray-800"
+              >
+                {isPendingCheckout ? "Loading..." : "Continue to Payment"}
               </button>
             </div>
           </div>
@@ -199,7 +224,7 @@ const Checkout = () => {
                   <p className="text-gray-500">Color: {product.color}</p>
                 </div>
               </div>
-              <p className="text-xl">${product.price.toFixed(2)}</p>
+              <p className="text-xl">${product.price}</p>
             </div>
           ))}
         </div>

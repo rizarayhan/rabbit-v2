@@ -7,8 +7,6 @@ const CartContent = () => {
   const user = useAuthStore((state) => state.user);
   const guestId = useAuthStore((state) => state.guestId);
 
-  console.log("cart: ", cart);
-
   const updateCartItem = useCartStore((state) => state.updateCartItem);
   const removeFromCart = useCartStore((state) => state.removeFromCart);
 
