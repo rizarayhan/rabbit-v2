@@ -9,11 +9,13 @@ import { Link } from "react-router-dom";
 import Searchbar from "./Searchbar";
 import CartDrawer from "../Layout/CartDrawer";
 import { useCartStore } from "../../store/cartStore";
+import { useAuthStore } from "../../store/authStore";
 
 const Navbar = () => {
   const [isNavOpen, setIsNavOpen] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
 
+  const user = useAuthStore((state) => state.user);
   const cartCount = useCartStore((state) => state.getCartCount());
 
   const toggleNav = () => {
@@ -64,12 +66,14 @@ const Navbar = () => {
 
         {/* Right - Icons */}
         <div className="flex items-center space-x-4">
-          <Link
-            to="/admin"
-            className="bg-black block text-white text-sm rounded px-2 hover:bg-gray-700"
-          >
-            Admin
-          </Link>
+          {user && user.role === "admin" && (
+            <Link
+              to="/admin"
+              className="bg-black block text-white text-sm rounded px-2 hover:bg-gray-700"
+            >
+              Admin
+            </Link>
+          )}
           <Link to="/profile">
             <HiOutlineUser className="h-6 w-6 hover:text-black text-gray-700" />
           </Link>
