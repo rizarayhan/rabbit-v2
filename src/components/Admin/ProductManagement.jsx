@@ -1,20 +1,26 @@
 import { Link } from "react-router-dom";
+import {
+  useAdminProducts,
+  useDeleteProduct,
+} from "../../hooks/useAdminProducts";
 
 const ProductManagement = () => {
-  const products = [
-    {
-      _id: 123123,
-      name: "Shirt",
-      price: 110,
-      sku: "123123123",
-    },
-  ];
+  const { data: products = [], isLoading, error } = useAdminProducts();
+  const { mutate: deleteProductMutation } = useDeleteProduct();
 
   const handleDelete = (id) => {
-    if (window.confirm("Are you sure you want to delete this product?")) {
-      console.log(id);
-    }
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this product?",
+    );
+
+    if (!confirmDelete) return;
+    deleteProductMutation(id);
   };
+
+  if (isLoading) return <p>Loading...</p>;
+  if (error) {
+    return <p className="text-red-500">Error: {error.message}</p>;
+  }
   return (
     <div className="max-w-7xl mx-auto p-6">
       <h2 className="text-2xl font-bold mb-6">Product Management</h2>

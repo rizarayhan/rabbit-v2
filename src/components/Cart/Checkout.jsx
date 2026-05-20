@@ -54,9 +54,9 @@ const Checkout = () => {
     try {
       await payCheckoutMutation({ checkoutId, paymentDetails: {} });
 
-      await finalizeChekcoutMutation(checkoutId);
+      const order = await finalizeChekcoutMutation(checkoutId);
 
-      navigate(`/order-confirmation/${checkoutId}`);
+      navigate(`/order-confirmation/${order._id}`);
     } catch (error) {
       console.error(error);
     }

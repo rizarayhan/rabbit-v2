@@ -1,18 +1,39 @@
-const OrderManagement = () => {
-  const orders = [
-    {
-      _id: 1213123,
-      user: {
-        name: "John Doe",
-      },
-      totalPrice: 110,
-      status: "Processing",
-    },
-  ];
+import { useNavigate } from "react-router-dom";
+import { useAuthStore } from "../../store/authStore";
+import {
+  useAdminOrders,
+  useUpdateOrderStatus,
+} from "../../hooks/useAdminOrders";
+import { useEffect } from "react";
 
-  const handleStatusChange = (userId, status) => {
-    console.log({ id: userId, status });
+const OrderManagement = () => {
+  const navigate = useNavigate();
+  const user = useAuthStore((state) => state.user);
+  const {
+    data: orders = [],
+    isLoading,
+    error,
+  } = useAdminOrders({ enabled: !!user && user.role === "admin" });
+  const { mutate: updateOrderStatusMutation } = useUpdateOrderStatus();
+
+  useEffect(() => {
+    if (!user && user.role !== "admin") {
+      navigate("/");
+    }
+  }, [user, navigate]);
+
+  const handleStatusChange = (orderId, status) => {
+    updateOrderStatusMutation({
+      id: orderId,
+      status,
+    });
   };
+
+  if (isLoading) return <p>Loading...</p>;
+  if (error) {
+    return <p className="text-red-500">Error: {error.message}</p>;
+  }
+
   return (
     <div className="max-w-7xl mx-auto p-6">
       <h2 className="text-2xl font-bold mb-6">Order Management</h2>

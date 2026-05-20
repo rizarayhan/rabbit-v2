@@ -16,7 +16,10 @@ const GenderCollectionSection = () => {
             <h2 className="text-2xl font-bold text-gray-900 mb-3">
               Women's Collection
             </h2>
-            <a href="#" className="text-gray-900 underline">
+            <a
+              href="/collection/all?gender=Women"
+              className="text-gray-900 underline"
+            >
               Shop Now
             </a>
           </div>
@@ -33,7 +36,10 @@ const GenderCollectionSection = () => {
             <h2 className="text-2xl font-bold text-gray-900 mb-3">
               Men's Collection
             </h2>
-            <a href="#" className="text-gray-900 underline">
+            <a
+              href="/collection/all?gender=Men"
+              className="text-gray-900 underline"
+            >
               Shop Now
             </a>
           </div>

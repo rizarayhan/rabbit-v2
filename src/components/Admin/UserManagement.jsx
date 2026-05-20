@@ -1,14 +1,35 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuthStore } from "../../store/authStore";
+import {
+  useAddUser,
+  useDeleteUser,
+  useUpdateUser,
+  useUsers,
+} from "../../hooks/useAdmin";
 
 const UserManagement = () => {
-  const users = [
-    {
-      _id: "123",
-      name: "John Doe",
-      email: "example@mail.com",
-      role: "admin",
-    },
-  ];
+  const navigate = useNavigate();
+
+  const user = useAuthStore((state) => state.user);
+
+  //queries
+  const {
+    data: users = [],
+    isLoading,
+    error,
+  } = useUsers({ enabled: !!user && user.role === "admin" });
+
+  //mutation
+  const { mutate: addUserMutation, isPending: isAddingUser } = useAddUser();
+  const { mutate: updateUserMutation } = useUpdateUser();
+  const { mtate: deleteUserMutation } = useDeleteUser();
+
+  useEffect(() => {
+    if (user && user.role !== "admin") {
+      navigate("/");
+    }
+  }, [user, navigate]);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -26,25 +47,40 @@ const UserManagement = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(formData);
 
-    setFormData({
-      name: "",
-      email: "",
-      password: "",
-      role: "customer",
+    addUserMutation(formData, {
+      onSuccess: () => {
+        setFormData({
+          name: "",
+          email: "",
+          password: "",
+          role: "customer",
+        });
+      },
     });
   };
 
   const handleRoleChange = (userId, newRole) => {
-    console.log({ id: userId, role: newRole });
+    updateUserMutation({
+      id: userId,
+      role: newRole,
+    });
   };
 
   const handleDeleteUser = (userId) => {
-    if (window.confirm("Are you sure you want to delete this user?")) {
-      console.log(userId);
-    }
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this user?",
+    );
+
+    if (!confirmDelete) return;
+
+    deleteUserMutation(userId);
   };
+
+  if (isLoading) return <p>Loading...</p>;
+  if (error) {
+    return <p className="text-red-500">Error: {error.message}</p>;
+  }
   return (
     <div className="max-w-7xl mx-auto p-6">
       <h2 className="text-2xl font-bold mb-6">User Management</h2>
@@ -97,6 +133,7 @@ const UserManagement = () => {
             </select>
           </div>
           <button
+            disabled={isAddingUser}
             type="submit"
             className="bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600"
           >
